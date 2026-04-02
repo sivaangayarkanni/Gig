@@ -2,9 +2,10 @@ services:
   - type: web
     name: moltbot-backend
     runtime: python
+    rootDir: backend
     region: oregon
-    buildCommand: cd backend && pip install -r requirements.txt
-    startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: MONGO_URL
         sync: false
@@ -19,9 +20,13 @@ services:
 
   - type: static
     name: moltbot-frontend
+    rootDir: frontend
     region: oregon
-    buildCommand: cd frontend && yarn install && REACT_APP_BACKEND_URL=https://moltbot-backend.onrender.com yarn build
-    staticPublishPath: ./frontend/build
+    buildCommand: yarn install && yarn build
+    staticPublishPath: ./build
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        sync: false
     routes:
       - type: rewrite
         source: /*
