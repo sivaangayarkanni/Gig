@@ -1145,6 +1145,11 @@ async def get_status_checks():
 # Include the router in the main app
 app.include_router(api_router)
 
+
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Moltbot API is running"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
