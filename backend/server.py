@@ -302,7 +302,7 @@ async def create_session(request: SessionRequest, response: Response):
         response.set_cookie(
             key="session_token",
             value=session_token,
-            httponly=True,
+            httponly=False,
             secure=True,
             samesite="none",
             path="/",
@@ -314,7 +314,8 @@ async def create_session(request: SessionRequest, response: Response):
 
         return {
             "ok": True,
-            "user": user_doc
+            "user": user_doc,
+            "session_token": session_token
         }
 
     except HTTPException:

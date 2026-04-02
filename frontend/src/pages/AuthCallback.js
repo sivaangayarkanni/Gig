@@ -54,6 +54,11 @@ export default function AuthCallback() {
         }
 
         const data = await response.json();
+
+        // Store session token for Bearer auth
+        if (data.session_token) {
+          localStorage.setItem('session_token', data.session_token);
+        }
         
         // Clear the hash from URL and navigate to dashboard with user data
         window.history.replaceState(null, '', window.location.pathname);

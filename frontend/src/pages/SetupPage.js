@@ -14,6 +14,11 @@ import OpenClaw from '@/components/ui/icons/OpenClaw';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
 const API = `${BACKEND_URL}/api`;
 
+function getAuthHeaders() {
+  const token = localStorage.getItem('session_token');
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+
 export default function SetupPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -42,7 +47,8 @@ export default function SetupPage() {
     const checkAuth = async () => {
       try {
         const response = await fetch(`${API}/auth/me`, {
-          credentials: 'include'
+          credentials: 'include',
+          headers: getAuthHeaders()
         });
         if (!response.ok) throw new Error('Not authenticated');
         const userData = await response.json();
@@ -61,7 +67,8 @@ export default function SetupPage() {
     setCheckingStatus(true);
     try {
       const res = await fetch(`${API}/openclaw/status`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers: getAuthHeaders()
       });
       if (res.ok) {
         const data = await res.json();
@@ -90,7 +97,8 @@ export default function SetupPage() {
     try {
       // Fetch the token to pass to the Control UI
       const res = await fetch(`${API}/openclaw/token`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers: getAuthHeaders()
       });
       if (res.ok) {
         const data = await res.json();
@@ -109,11 +117,13 @@ export default function SetupPage() {
     try {
       await fetch(`${API}/auth/logout`, {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
+        headers: getAuthHeaders()
       });
     } catch (e) {
       // Ignore errors
     }
+    localStorage.removeItem('session_token');
     navigate('/login', { replace: true });
   };
 
@@ -121,7 +131,8 @@ export default function SetupPage() {
     try {
       const res = await fetch(`${API}/openclaw/stop`, {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }
       });
       if (res.ok) {
         setStatus(null);
@@ -168,7 +179,7 @@ export default function SetupPage() {
 
       const res = await fetch(`${API}/openclaw/start`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         credentials: 'include',
         body: JSON.stringify(payload)
       });
