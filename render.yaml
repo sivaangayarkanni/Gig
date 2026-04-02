@@ -22,7 +22,7 @@ services:
     name: moltbot-frontend
     rootDir: frontend
     region: oregon
-    buildCommand: yarn install && yarn build
+    buildCommand: npm install --legacy-peer-deps && npm run build
     staticPublishPath: ./build
     envVars:
       - key: REACT_APP_BACKEND_URL
